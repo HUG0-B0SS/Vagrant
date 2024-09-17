@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
 
   config.vm.define "hvainlu-dockerhost" do |dockerhost|
-    dockerhost.vm.box = "generic/debian12"
+    dockerhost.vm.box = "generic/ubuntu2310"
     dockerhost.vm.network "public_network"
     dockerhost.vm.network "private_network", ip: "10.10.10.130", virtualbox__intnet: "ansible_hvainlu"
     dockerhost.vm.hostname = "dockerhost-hvainlu"
@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "hvainlu-ansible" do |ansible|
-    ansible.vm.box = "generic/debian12"
+    ansible.vm.box = "generic/ubuntu2310"
     ansible.vm.network "public_network"
     ansible.vm.network "private_network", ip: "10.10.10.131", virtualbox__intnet: "ansible_hvainlu"
     ansible.vm.hostname = "ansible-hvainlu"
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "hvainlu-ubuntu" do |ubuntu|
-    ubuntu.vm.box = "generic/ubuntu2304"
+    ubuntu.vm.box = "generic/ubuntu2310"
     ubuntu.vm.network "public_network"
     ubuntu.vm.network "private_network", ip: "10.10.10.132", virtualbox__intnet: "ansible_hvainlu"
     ubuntu.vm.hostname = "ubuntu-hvainlu"
