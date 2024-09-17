@@ -1,115 +1,90 @@
 Vagrant.configure("2") do |config|
 
-  config.vm.define "hvainlu-dockerhost" do |debian|
-    debian.vm.box = "generic/debian12"
-    debian.vm.network "public_network"
-    debian.vm.network "private_network", ip: "10.10.10.130/25", virtualbox__intnet: "ansible_hvainlu"
-    debian.vm.hostname = "hvainlu-dockerhost"
-    debian.vm.provider :virtualbx do |vb|
+  config.vm.define "hvainlu-dockerhost" do |dockerhost|
+    dockerhost.vm.box = "generic/debian12"
+    dockerhost.vm.network "public_network"
+    dockerhost.vm.network "private_network", ip: "10.10.10.130", virtualbox__intnet: "ansible_hvainlu"
+    dockerhost.vm.hostname = "dockerhost-hvainlu"
+    dockerhost.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "8192"]
       vb.customize ["modifyvm", :id, "--cpus", "4"]
-      vb.name = "hvainlu-dockerhost"
+      vb.name = "dockerhost-hvainlu"
     end
-    debian.vm.provision "shell", inline: <<-SHELL
+    dockerhost.vm.provision "shell", inline: <<-SHELL
+      apt-get clean
       apt-get update
-      apt-get install -y git
-	  apt-get install wget
-	  apt-get install mc
-	  apt-get install tmux
-	  apt-get install tree
-	  apt-get install docker-ce
-	  apt-get install curl
-	  apt-get install docker-ce-cli
-	  apt-get install containerd.io
-	  
+      apt-get install -y git fish tmux wget tree mc
+      apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io
     SHELL
   end
 
   config.vm.define "hvainlu-ansible" do |ansible|
     ansible.vm.box = "generic/debian12"
     ansible.vm.network "public_network"
-    ansible.vm.network "private_network", ip: "10.10.10.131/25", virtualbox__intnet: "ansible_hvainlu"
-    ansible.vm.hostname = "hvainlu-ansible"
+    ansible.vm.network "private_network", ip: "10.10.10.131", virtualbox__intnet: "ansible_hvainlu"
+    ansible.vm.hostname = "ansible-hvainlu"
     ansible.vm.synced_folder "./ansible_data", "/vagrant_data"
     ansible.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
-      vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.name = "hvainlu-ansiblee"
+      vb.customize ["modifyvm", :id, "--memory", "8192"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+      vb.name = "ansible-hvainlu"
     end
     ansible.vm.provision "shell", inline: <<-SHELL
       apt-get update
-      apt-get install -y git
-	  apt-get install wget
-	  apt-get install mc
-	  apt-get install tmux
-	  apt-get install fish
-	  apt-get install tree
-	  apt-get install ansible
-	  apt-get install sshpass
-	  apt-get install yamllint
-	  apt-get install ansible-lint
+      apt-get install -y git fish tmux wget tree mc ansible sshpass yamllint ansible-lint
     SHELL
   end
 
   config.vm.define "hvainlu-ubuntu" do |ubuntu|
-    ubuntu.vm.box = "bento/ubuntu-24.04"
+    ubuntu.vm.box = "generic/ubuntu2304"
     ubuntu.vm.network "public_network"
-    ubuntu.vm.network "private_network", ip: "10.10.10.132/25", virtualbox__intnet: "ansible_hvainlu"
-    ubuntu.vm.hostname = "hvainlu-ubuntu"
+    ubuntu.vm.network "private_network", ip: "10.10.10.132", virtualbox__intnet: "ansible_hvainlu"
+    ubuntu.vm.hostname = "ubuntu-hvainlu"
     ubuntu.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048"]
       vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.name = "hvainlu-ubuntu"
+      vb.name = "ubuntu-hvainlu"
     end
     ubuntu.vm.provision "shell", inline: <<-SHELL
-      apt update
-      apt install -y git
-	  apt install wget
-	  apt install mc
-	  apt install tmux
-	  apt install fish
-	  apt install tree
+      apt-get update
+      apt-get install -y git fish tmux wget tree mc
     SHELL
   end
+
   config.vm.define "hvainlu-centos" do |centos|
-    centos.vm.box = "eurolinux-vagrant/centos-stream-9"
-    centos.vm.box_version = "9.0.45"
+    centos.vm.box = "generic/centos9s"
     centos.vm.network "public_network"
-    centos.vm.network "private_network", ip: "10.10.10.133/25", virtualbox__intnet: "ansible_hvainlu"
-    centos.vm.hostname = "hvainlu-centos"
+    centos.vm.network "private_network", ip: "10.10.10.133", virtualbox__intnet: "ansible_hvainlu"
+    centos.vm.hostname = "centos-hvainlu"
     centos.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048"]
       vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.name = "hvainlu-centos"
+      vb.name = "centos-hvainlu"
     end
     centos.vm.provision "shell", inline: <<-SHELL
-      dnf update
-      dnf install -y git
-	  dnf install wget
-	  dnf install mc
-	  dnf install tmux
-	  dnf install fish
-	  dnf install tree
+      yum update -y
+      yum install -y git fish tmux wget tree mc
     SHELL
   end
+
   config.vm.define "hvainlu-opensuse" do |opensuse|
-    opensuse.vm.box = "opensuse/Leap-15.4.x86_64"
+    opensuse.vm.box = "opensuse/Leap-15.2.x86_64"
     opensuse.vm.network "public_network"
-    opensuse.vm.network "private_network", ip: "10.10.10.134/25", virtualbox__intnet: "ansible_hvainlu"
-    opensuse.vm.hostname = "hvainlu-opensuse"
+    opensuse.vm.network "private_network", ip: "10.10.10.134", virtualbox__intnet: "ansible_hvainlu"
+    opensuse.vm.hostname = "opensuse-hvainlu"
     opensuse.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048"]
       vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.name = "hvainlu-opensuse"
+      vb.name = "opensuse-hvainlu"
     end
     opensuse.vm.provision "shell", inline: <<-SHELL
-      zypper update
-      zypper install -y git
-	  zypper install wget
-	  zypper install mc
-	  zypper install tmux
-	  zypper install fish
-	  zypper install tree
+      zypper refresh
+      zypper install -y git fish tmux wget tree mc
     SHELL
   end
- end
+
+end
