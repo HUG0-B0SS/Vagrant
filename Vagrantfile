@@ -1,13 +1,13 @@
 Vagrant.configure("2") do |config|
 
   config.vm.define "hvainlu-dockerhost" do |dockerhost|
-    dockerhost.vm.box = "generic/ubuntu2310"
+    dockerhost.vm.box = "generic/ubuntu2304"
     dockerhost.vm.network "public_network"
     dockerhost.vm.network "private_network", ip: "10.10.10.130", virtualbox__intnet: "ansible_hvainlu"
     dockerhost.vm.hostname = "dockerhost-hvainlu"
     dockerhost.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "8192"]
-      vb.customize ["modifyvm", :id, "--cpus", "4"]
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
       vb.name = "dockerhost-hvainlu"
     end
     dockerhost.vm.provision "shell", inline: <<-SHELL
@@ -23,14 +23,14 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "hvainlu-ansible" do |ansible|
-    ansible.vm.box = "generic/ubuntu2310"
+    ansible.vm.box = "generic/ubuntu2304"
     ansible.vm.network "public_network"
     ansible.vm.network "private_network", ip: "10.10.10.131", virtualbox__intnet: "ansible_hvainlu"
     ansible.vm.hostname = "ansible-hvainlu"
     ansible.vm.synced_folder "./ansible_data", "/vagrant_data"
     ansible.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "8192"]
-      vb.customize ["modifyvm", :id, "--cpus", "4"]
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
       vb.name = "ansible-hvainlu"
     end
     ansible.vm.provision "shell", inline: <<-SHELL
@@ -40,13 +40,13 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "hvainlu-ubuntu" do |ubuntu|
-    ubuntu.vm.box = "generic/ubuntu2310"
+    ubuntu.vm.box = "generic/ubuntu2304"
     ubuntu.vm.network "public_network"
     ubuntu.vm.network "private_network", ip: "10.10.10.132", virtualbox__intnet: "ansible_hvainlu"
     ubuntu.vm.hostname = "ubuntu-hvainlu"
     ubuntu.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
-      vb.customize ["modifyvm", :id, "--cpus", "2"]
+      vb.customize ["modifyvm", :id, "--memory", "8192"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
       vb.name = "ubuntu-hvainlu"
     end
     ubuntu.vm.provision "shell", inline: <<-SHELL
